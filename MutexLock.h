@@ -12,6 +12,7 @@
 #define MUTEX_LOCK_H
 #include <pthread.h>
 #include "NonCopyable.h"
+#include <assert.h>
 
 /**
  * @brief 封装互斥锁
@@ -23,7 +24,8 @@ friend class Condition;   // 条件变量
 public:
     MutexLock() { pthread_mutex_init(&m_mutex, NULL); }
     ~MutexLock() {
-        pthread_mutex_lock(&m_mutex);
+        int rest = pthread_mutex_lock(&m_mutex);
+        assert(rest == 0); //Debug
         pthread_mutex_destroy(&m_mutex);
     }
     void lock() { pthread_mutex_lock(&m_mutex); }

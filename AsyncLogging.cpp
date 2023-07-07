@@ -13,13 +13,14 @@
 #include "LogFile.h"
 #include <stdio.h>
 #include "unistd.h"
+#include <iostream>
 
 
-AsyncLogging::AsyncLogging(const std::string logFileName, int flushInterval = 2)
+AsyncLogging::AsyncLogging(const std::string logFileName, int flushInterval)
     :   m_flushInterval(flushInterval),
         m_running(false),
         m_logFileName(logFileName),
-        m_thread(std::bind(&threadFunc(), this), "Logging"),
+        m_thread(std::bind(&AsyncLogging::threadFunc, this), "Logging"),
         m_mutex(),
         m_cond(m_mutex),
         m_currentBuffer(new Buffer),
@@ -36,7 +37,7 @@ AsyncLogging::~AsyncLogging() {
     if (m_running)
         stop();
 }
-void AsyncLogging::append(const cahr* logLine, int lne)
+void AsyncLogging::append(const char* logLine, int len)
 {
     MutexLockGuard lock(m_mutex);                      // 加锁
     if (m_currentBuffer->avail() > len) {
@@ -52,23 +53,7 @@ void AsyncLogging::append(const cahr* logLine, int lne)
         m_cond.notify();
     }
 }
-// void AsyncLogging::append(const char* logLine, int len)
-// {
-//     MutexLockGuard lock(m_mutex);  // 加锁
-//     if (m_currentBuffer->avail() > len) {
-//         m_currentBuffer->append(logLine, len);
-//     } else {  // 当前缓冲区满了
-//         m_buffers.push_back(m_currentBuffer);  // 将指向已满缓冲区的指针拷贝到 m_buffers 中
-//         m_currentBuffer.reset();  // 将智能指针置空(而不是将缓冲区置空)
-//         // 在移动 m_nextBuffer 到 m_currentBuffer 之后立即进行日志写入操作
-//         m_currentBuffer = std::move(m_nextBuffer);
-//         m_currentBuffer->append(logLine, len);  // 写入日志
-//         if (!m_nextBuffer) {
-//             m_nextBuffer.reset(new Buffer);  // 申请新的缓冲区
-//         }
-//         m_cond.notify();
-//     }
-// }
+
 
 
 void AsyncLogging::start()
@@ -138,9 +123,10 @@ void AsyncLogging::threadFunc()
             newBuffer2 = buffersToWrite.back();
             buffersToWrite.pop_back();
             newBuffer2->reset();
+            
         }
         buffersToWrite.clear();
-        logFile.flush()
+        logFile.flush();
     }
     logFile.flush();
 }

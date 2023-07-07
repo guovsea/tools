@@ -11,6 +11,8 @@
 #ifndef LOG_FILE_UTIL_H
 #define LOG_FILE_UTIL_H
 #include <string>
+#include <string.h>
+#include <iostream>
 #include "NonCopyable.h"
 #define FILE_BUFFER_SIZE  64 * 1024
 class LogFileAppender : NonCopyable
@@ -31,19 +33,17 @@ template <int SIZE>
 class LogBuffer : NonCopyable
 {
 public:
-    LogBuffer() : m_cur(nullptr) { m_cur = m_data;}
+    LogBuffer() : m_cur(NULL) { m_cur = m_data; }
     ~LogBuffer() {}
     // 返回缓冲区剩余容量
-    int avail() const { return static_cast<int>(end() - m_data);}
-    // 容量不足返回-1
-    int append(const char* buf, size_t len)
+    int avail() const { return static_cast<int>(end() - m_cur);}
+
+    void append(const char* buf, int len)
     {
         if (avail() > static_cast<int>(len)) {
             memcpy(m_cur, buf, len);
             m_cur += len;
-            return len;
         }
-        return -1;
     }
     const char* data() const { return m_data; }
     int length() const { return static_cast<int>(m_cur - m_data); }

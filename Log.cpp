@@ -1,10 +1,13 @@
 #include <assert.h>
 #include <time.h>
+#include <sys/time.h>
+#include <pthread.h>
 #include "Log.h"
 #include "Thread.h"
 #include "AsyncLogging.h"
+#include <iostream>
 
-std::string Log::m_logFileName = "./WebServer.log";
+
 //Log::setLoFileName("./WebServer.log");
 
 /**
@@ -12,7 +15,9 @@ std::string Log::m_logFileName = "./WebServer.log";
  * 
  */
 static pthread_once_t once_control_ = PTHREAD_ONCE_INIT;
-static AsyncLogging *AsyncLogger_;
+static AsyncLogging* AsyncLogger_;
+
+std::string Log::m_logFileName = "./WebServer.log";
 
 void once_init()
 {
@@ -20,13 +25,13 @@ void once_init()
     AsyncLogger_->start();
 }
 
-void output(const cahr* msg, int len)
+void output(const char* msg, int len)
 {
     pthread_once(&once_control_, once_init);
     AsyncLogger_->append(msg, len);
 }
 
-Log::Impl::formatTime()
+void Log::Impl::formatTime()
 {
     struct timeval tv;
     time_t time;
@@ -37,13 +42,13 @@ Log::Impl::formatTime()
     strftime(str_time, 26, "%Y-%m-%d %H:%M:%S\n", p_time);
     m_stream << str_time;
 }
-Log::Log(const char *fileName, int line) : m_impl(fileName, line) { }
-~Log()
+Log::Log(const char *fileName, int line) : m_impl(fileName, line) 
 {
-
+    //std::cout << "Log::Log" << std::endl; // test
 }
+
 Log::Impl::Impl(const char *fileName, int line)
-    : m_stream(),m_line(line), m_logFileName(fileName)
+    : m_stream(),m_line(line), m_fileName(fileName)
 {
     formatTime();
 }
@@ -51,8 +56,8 @@ Log::Impl::Impl(const char *fileName, int line)
 ///         将Log 对象的 LogStream 的缓冲区复制到 AsyncLogging 的缓冲区中
 Log::~Log()
 {
-    impl.m_stream << " -- " << impl.m_logFilename << ':' << impl.m_line << '\n';
-    const LogBuffer::Buffer& buf(stream().buffer());
+    m_impl.m_stream << " -- " << m_impl.m_fileName<< ':' << m_impl.m_line << '\n';
+    const LogStream::Buffer& buf(stream().buffer());
     output(buf.data(), buf.length());
 }
 

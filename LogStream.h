@@ -17,9 +17,9 @@
 #include "LogFileUtil.h"
 
 // 4028
-constexpr int kSmallBuffer = 4028;
+constexpr const int kSmallBuffer = 4096;
 // 4MB
-constexpr int kLargeBuffer = 4028 * 1024;
+constexpr const int kLargeBuffer = 4096 * 1024;
 // 能够完整写入整数的最小剩余 buffer 空间
 constexpr const int kMaxNumericSize = 32;
 
@@ -37,6 +37,7 @@ public:
     LogStream& operator<<(unsigned long long);
     LogStream& operator<<(float);
     LogStream& operator<<(double);
+    LogStream& operator<<(long double);
     LogStream& operator<<(char);
     LogStream& operator<<(const char*);
     LogStream& operator<<(const unsigned char* );

@@ -16,6 +16,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <memory>
 #include "NonCopyable.h"
 #include "MutexLock.h"
 #include "CountDownLatch.h"
@@ -26,12 +27,13 @@ class AsyncLogging : NonCopyable
 {
 public:
     AsyncLogging(const std::string logFileName, int flushInterval = 2);
-    ~AsyncLogging() { }
-    void append(const cahr* logLine, int lne);
+    ~AsyncLogging();
+    void append(const char* logLine, int lne);
     void start();
     void stop();
 private:
     void threadFunc();
+    //typedef LogBuffer<kLargeBuffer> Buffer;
     typedef LogBuffer<kLargeBuffer> Buffer;
     typedef std::vector<std::shared_ptr<Buffer>> BufferVector;
     typedef std::shared_ptr<Buffer> BufferPtr;
@@ -45,6 +47,6 @@ private:
     BufferPtr m_nextBuffer;
     BufferVector m_buffers;
     CountDownLatch m_latch;
-}
+};
 
 #endif

@@ -12,10 +12,12 @@
 #ifndef CONDITION_H
 #define CONDITION_H
 #include <pthread.h>
+#include <assert.h>
 #include <time.h>
 #include <errno.h>
 #include "MutexLock.h"
 #include "NonCopyable.h"
+#include <iostream>
 
 class Condition : NonCopyable
 {
@@ -38,6 +40,7 @@ public:
         struct timespec  abstime;
         clock_gettime(CLOCK_REALTIME, &abstime);
         abstime.tv_sec += static_cast<time_t>(seconds);
+        assert(m_mutex.get() != NULL);  // Debug
         return ETIMEDOUT == pthread_cond_timedwait(&m_cond, m_mutex.get(), &abstime);
     }
 

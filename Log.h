@@ -11,6 +11,8 @@
 #ifndef LOG_H
 #define LOG_H
 #include <string>
+#include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include "LogStream.h"
 

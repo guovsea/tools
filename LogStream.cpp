@@ -2,6 +2,7 @@
 #include <string>
 #include <stdio.h>
 #include <iostream>
+#include <algorithm> 
 #include "LogStream.h"
 #include "LogFileUtil.h"
 
@@ -111,6 +112,14 @@ LogStream& LogStream::operator<<(double v)
     return *this;
 }
 
+LogStream& LogStream::operator<<(long double v) {
+    if (m_buffer.avail() >= kMaxNumericSize) {
+        int len = snprintf(m_buffer.current(), kMaxNumericSize, "%.12Lg", v);
+        m_buffer.add(len);
+    }
+  return *this;
+}
+
 LogStream& LogStream::operator<<(char v)
 {
     m_buffer.append(&v, 1);
@@ -145,9 +154,7 @@ LogStream& LogStream::operator<<(const std::string& str)
 //     //     printf("%c", buf[i]);
 //     // }
 //     LogStream log;
-//     log.resetBuffer();
-//     log << "this is a char";
-//     for (int i = 0; i < log.buffer().length(); ++i) {
-//         std::cout << log.buffer().data()[i];
-//     }
+//     // log.resetBuffer();
+//     log << 0;
+
 // }
