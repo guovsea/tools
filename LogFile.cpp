@@ -1,10 +1,10 @@
 #include "LogFile.h"
 
-LogFile::LogFile(const std::string& baseName, int flushEveryN)
-    : m_baseName(baseName), m_flushEveryN(flushEveryN),
+LogFile::LogFile(const std::string& logFileName, int flushEveryN)
+    : m_logFileName(logFileName), m_flushEveryN(flushEveryN),
         m_count(0), m_mutex(new MutexLock)
 {
-    m_file.reset(new LogFileAppender(baseName));
+    m_file.reset(new LogFileAppender(logFileName));
 }
 
 LogFile::~LogFile() {}

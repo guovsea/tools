@@ -86,7 +86,7 @@ void testMutexLock()
 
     for (int i = 0; i < thread_n; ++i) {
         std::unique_ptr<Thread> pthrd(new Thread(run));
-        threads.push_back(std::move(pthrd));
+        threads.push_back(std::move(pthrd)); // Thread 对象只有有参构造函数
     }
     for (int i = 0; i < thread_n; i++) {
         threads[i]->start();

@@ -19,17 +19,20 @@
 class LogFile : NonCopyable
 {
 public:
-    LogFile(const std::string& baseName, int flushEveryN = 1024);
+    LogFile(const std::string& logFileName, int flushEveryN = 1024);
     ~LogFile();
 
     void append(const char* logLine, int len);
+    /**
+     * @brief 写入文件时也存在一个缓冲区, 使用 flush 强制将缓冲区的内容刷入文件
+     * 
+     */
     void flush();
-    // bool rollFile();
 
 private:
     void append_unlocked(const char* logLine, int len);
 
-    const std::string m_baseName;
+    const std::string m_logFileName;
     const int m_flushEveryN;
     int m_count;
     std::unique_ptr<MutexLock> m_mutex;

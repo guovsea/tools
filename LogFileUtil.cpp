@@ -44,4 +44,5 @@ void LogFileAppender::flush() { fflush(m_fp);}
  */
 size_t LogFileAppender::write(const char* logline, size_t len) {
     return fwrite_unlocked(logline, 1, len, m_fp);
+    //return fwrite(logline, 1, len, m_fp);
 }
