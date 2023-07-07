@@ -19,6 +19,7 @@ void once_init()
     AsyncLogger_ = new AsyncLogging(Log::getLogFileName());
     AsyncLogger_->start();
 }
+
 void output(const cahr* msg, int len)
 {
     pthread_once(&once_control_, once_init);
@@ -46,6 +47,8 @@ Log::Impl::Impl(const char *fileName, int line)
 {
     formatTime();
 }
+/// @brief  Log 对象每次析构的时候都会通过 output 函数, 调用 AsyncLogging 的 append 方法
+///         将Log 对象的 LogStream 的缓冲区复制到 AsyncLogging 的缓冲区中
 Log::~Log()
 {
     impl.m_stream << " -- " << impl.m_logFilename << ':' << impl.m_line << '\n';
