@@ -45,7 +45,7 @@ void threadFunc()
 
 void test_single_thread()
 {
-    // 100000 lines
+    // 100000 * 2 lines
     cout << "----------test single thread----------" << endl;
     for (int i = 0; i < 100000; ++i)
     {
@@ -55,7 +55,7 @@ void test_single_thread()
 
 void test_multi_threads(int threadNum = 4)
 {
-    // threadNum * 100000 lines
+    // threadNum * 100000 * 2 lines
     cout << "----------test multi thread-----------" << endl;
     vector<shared_ptr<Thread>> vsp;
     for (int i = 0; i < threadNum; ++i)
@@ -73,7 +73,7 @@ void test_multi_threads(int threadNum = 4)
 
 int main()
 {
-    // 共500014行
+    // 共1000028行
     type_test();
 
     stream_test();
